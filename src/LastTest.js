@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 function Move(props) {
   const style = {
     width: "200px",
@@ -8,6 +10,8 @@ function Move(props) {
     display: "flex",
     justifyContent: "center",
     flexWrap: "wrap",
+    left: props.X,
+    top: props.Y,
   };
   return (
     <div className="move" style={style}>
@@ -20,35 +24,38 @@ function Move(props) {
 }
 
 function LastTest() {
-  let clicked = false;
+  const [clicked, setClicekd] = useState(false);
+  const [X, setX] = useState();
+  const [Y, setY] = useState();
 
-  const mousemove = (e) => {
-    if (clicked) {
-      const element = e.target.parentNode;
-      const x = e.clientX - 100 + "px";
-      const y = e.clientY - 10 + "px";
-      element.style.left = x;
-      element.style.top = y;
-    }
+  const onMouseMove = (e) => {
+    setX(e.clientX - 100 + "px");
+    setY(e.clientY - 20 + "px");
   };
 
-  const mousedown = (e) => {
-    clicked = true;
+  const onMouseDown = (e) => {
+    setClicekd(true);
     const element = e.target.parentNode;
     element.style.background = "black";
-    element.childNodes[0].style.color = "white";
-    element.childNodes[1].style.color = "white";
+    colorChanger(element, "white");
   };
 
-  const mouseup = (e) => {
-    clicked = false;
+  const colorChanger = (target, color) => {
+    target?.childNodes.forEach((node) => {
+      node.style.color = color;
+    });
+  };
+
+  const onMouseUp = (e) => {
+    setClicekd(false);
     const element = e.target.parentNode;
     element.style.background = "orange";
-    element.childNodes[0].style.color = "black";
-    element.childNodes[1].style.color = "black";
+    colorChanger(element, "black");
   };
 
-  return <Move onMouseMove={mousemove} onMouseDown={mousedown} onMouseUp={mouseup} />;
+  return (
+    <Move X={X} Y={Y} onMouseMove={clicked ? onMouseMove : false} onMouseDown={onMouseDown} onMouseUp={onMouseUp} />
+  );
 }
 
 export default LastTest;
